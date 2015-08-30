@@ -1,0 +1,27 @@
+﻿@using TimeManager.UI.Domain.Entry
+@model IEnumerable<Event>
+
+@{
+    var futureEvents = Model.Where(n => n.EndDate >= DateTime.Now).ToArray();
+}
+
+<div role="tabpanel" class="tab-pane active text-center" id="future">
+    @DisplayEventsHelper(futureEvents)
+</div>
+<div role="tabpanel" class="tab-pane text-center" id="past">
+    @DisplayEventsHelper(Model.Except(futureEvents))
+</div>
+
+@helper DisplayEventsHelper(IEnumerable<Event> events)
+{
+foreach (var entry in events)
+{
+        <div class="event">
+            <h4>@entry.BeginDate.ToShortDateString() - @entry.EndDate.ToShortDateString()</h4>
+            <p>@entry.Name</p>
+            <div class="time">@entry.BeginDate.ToShortTimeString() - @entry.EndDate.ToShortTimeString()</div>
+            <a href="#" class="btn btn-warning">Edit</a>
+            <a href="#" class="btn btn-danger">Delete</a>
+        </div>
+}
+}
