@@ -4,7 +4,7 @@
     var ajaxOptions = new AjaxOptions()
     {
         HttpMethod = "POST",
-        UpdateTargetId = "events",
+        OnSuccess = "onSuccess"
     };
 }
 
@@ -13,14 +13,15 @@
     <h4 class="modal-title">Add new event</h4>
 </div>
 
-@using (Ajax.BeginForm("CreateEvent", null, ajaxOptions, new { @class = "form-horizontal" }))
+@using (Ajax.BeginForm("AddEvent", null, ajaxOptions, new { @class = "form-horizontal" }))
 {
     <div class="modal-body">
         <div class="form-group">
             @Html.LabelFor(n => n.Name, new { @class = "control-label col-xs-2" })
             <div class="col-xs-4">
-                @Html.TextBoxFor(n => n.Name, new {@class = "form-control"})
+                @Html.TextBoxFor(n => n.Name, new { @class = "form-control" })
             </div>
+            @Html.ValidationMessageFor(n => n.Name)
         </div>
         <div class="form-group">
             @Html.LabelFor(n => n.BeginTime, new { @class = "control-label col-xs-2" })

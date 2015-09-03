@@ -9,7 +9,7 @@ namespace TimeManager.UI
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            routes.MapRoute("default", "{controller}/{action}", new {controller = "Events", action = "GetEvents"});
+            routes.MapRoute("default", "{controller}/{action}", new { controller = "Events", action = "Events" });
         }
     }
 }

@@ -12,10 +12,32 @@
     <div class="container">
         @RenderBody()
     </div>
+    <script type="x-tmpl-mustache" id="eventTemplate">
+        {{#events}}
+        <div class="event">
+            <h4>{{beginDate}} - {{endDate}}</h4>
+            <p>{{name}}</p>
+            <div class="time">{{beginTime}} - {{endTime}}</div>
+            <button class="btn btn-warning">Edit</button>
+            <button class="btn btn-danger btnDelete" data-id="{{id}}">Delete</button>
+        </div>
+        {{/events}}
+    </script>
+    <script type="x-tmpl-mustache" id="errorTemplate">
+        <div class="alert alert-warning">
+                {{#errors}}
+                <h4>{{.}}</h4>
+                {{/errors}}
+        </div>
+    </script>
     <script src="~/Scripts/jquery-1.9.1.js"></script>
     <script src="~/Scripts/bootstrap.js"></script>
     <script src="~/Scripts/jquery.datetimepicker.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
     <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+    @*<script src="~/Scripts/jquery.validate.unobtrusive.js"></script>*@
+    <script src="~/Scripts/mustache.js"></script>
+    <script src="~/Scripts/moment.js"></script>
     <script src="~/Scripts/customScripts.js"></script>
 </body>
 </html>

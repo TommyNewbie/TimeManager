@@ -1,25 +1,28 @@
-﻿@model IEnumerable<TimeManager.UI.Domain.Entry.Event>
-
-@{
+﻿@{
     ViewBag.Title = "Events";
 }
 
 <div class="modal fade" id="createEvent">
     <div class="modal-dialog">
         <div class="modal-content">
-            @Html.Partial("_CreateEventForm", new TimeManager.UI.Models.CreateEventViewModel() { EndTime = DateTime.Now, BeginTime = DateTime.Now })
+            @Html.Partial("_CreateEventForm", new TimeManager.UI.Models.CreateEventViewModel())
         </div>
     </div>
 </div>
 
-<div class="col-md-offset-3 col-md-6 text-center">
+<div class="col-md-offset-3 col-md-6 text-center" id="content">
     <button type="button"  data-toggle="modal" data-target="#createEvent" class="btn btn-default btn-lg">Add event</button>
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation" class="active"><a href="#future" aria-controls="future" role="tab" data-toggle="tab">Future</a></li>
         <li role="presentation"> <a href="#past" aria-controls="past" role="tab" data-toggle="tab">Past</a></li>
     </ul>
     <div class="tab-content" id="events">
-        @Html.Partial("DisplayEvents")
+        <div role="tabpanel" class="tab-pane active text-center" id="future">
+            
+        </div>
+        <div role="tabpanel" class="tab-pane text-center" id="past">
+            
+        </div>
     </div>
 </div>
 
