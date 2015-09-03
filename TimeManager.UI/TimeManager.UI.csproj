@@ -170,6 +170,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\ValidationAttributes\EndDateValidationAttribute.cs" />
+    <Compile Include="Infrastructure\ValidationAttributes\StartsAfterTodayAttribute.cs" />
     <Compile Include="Models\CreateEventViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

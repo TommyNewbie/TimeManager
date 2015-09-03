@@ -15,11 +15,11 @@ namespace TimeManager.Tests
     {
         private EventsController InitializeController()
         {
-            var events = new List<Event> {
+            var events = new List<Event>
+            {
                 new Event() { BeginDate = DateTime.Now },
                 new Event() { BeginDate = DateTime.Now },
                 new Event() { BeginDate = DateTime.Now }
-
             };
 
             var repo = new Mock<IEventRepository>();
