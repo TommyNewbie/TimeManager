@@ -31,28 +31,78 @@ namespace TimeManager.UI.Controllers
         }
 
         [HttpPost()]
-        public JsonResult AddEvent(CreateEventViewModel model)
+        public ActionResult AddEvent(CreateEventViewModel model)
         {
             if (ModelState.IsValid)
             {
                 _db.Add(new Event { Name = model.Name, BeginDate = model.BeginTime, EndDate = model.EndTime });
-                return Json(GetAllEvents(), JsonRequestBehavior.DenyGet);
+                return RedirectToAction("GetEvents");
             }
-            return Json(new { isValid = false, errors = GetErrors(ModelState)}, JsonRequestBehavior.DenyGet);
+            return Json(new { isValid = false, errors = GetErrors(ModelState) }, JsonRequestBehavior.DenyGet);
         }
 
         [HttpPost()]
-        public JsonResult DeleteEvent(int id)
+        public ActionResult DeleteEvent(int id)
         {
             try
             {
                 _db.Delete(id);
-                return Json(GetAllEvents(), JsonRequestBehavior.DenyGet);
+                return RedirectToAction("GetEvents");
             }
             catch (Exception)
             {
-                return Json(new { isValid = false, errors = new string[] { "Oops, something went wrong." } });
+                ModelState.AddModelError("", "Oops, something went wrong");
             }
+
+            return Json(new { isValid = false, errors = GetErrors(ModelState) });
+        }
+
+        public JsonResult GetEvent(int id)
+        {
+            var entry = _db.Find(id);
+            if (entry != null)
+            {
+                return Json(new
+                {
+                    isValid = true,
+                    entry = new
+                    {
+                        id = entry.Id,
+                        beginTime = entry.BeginDate.ToString(CultureInfo.InvariantCulture),
+                        endTime = entry.EndDate.ToString(CultureInfo.InvariantCulture),
+                        name = entry.Name
+                    }
+                }, JsonRequestBehavior.AllowGet);
+            }
+
+            ModelState.AddModelError("", "Event does not exist");
+
+            return Json(new { isValid = false, errors = GetErrors(ModelState) });
+        }
+
+        [HttpPost]
+        public ActionResult EditEvent(EditEventViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _db.Update(new Event
+                    {
+                        Id = model.Id,
+                        Name = model.Name,
+                        BeginDate = model.BeginTime,
+                        EndDate = model.EndTime
+                    });
+
+                    return RedirectToAction("GetEvents");
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError("", "Oops something went wrong");
+                }
+            }
+            return Json(new { isValid = false, errors = GetErrors(ModelState) }, JsonRequestBehavior.DenyGet);
         }
 
         private object GetErrors(ModelStateDictionary modelState)
@@ -73,7 +123,8 @@ namespace TimeManager.UI.Controllers
         private object GetAllEvents()
         {
             var events = _db.GetAll().ToArray();
-            var futureEvents = events.Where(n => n.BeginDate >= DateTime.Now).ToArray();
+            var futureEvents = events.Where(n => n.EndDate >= DateTime.Now).ToArray();
+
             return
                 new
                 {

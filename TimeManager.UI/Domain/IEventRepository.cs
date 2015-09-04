@@ -12,5 +12,7 @@ namespace TimeManager.UI.Domain
         void Delete(int id);
 
         void Update(Event entry);
+
+        Event Find(int id);
     }
 }

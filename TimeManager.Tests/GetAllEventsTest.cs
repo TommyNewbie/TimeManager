@@ -40,19 +40,19 @@ namespace TimeManager.Tests
             Assert.AreEqual(1, futureEvents[1].id, "futureEvents[1].id contains wrong value");
             Assert.AreEqual("name0", futureEvents[0].name, "futureEvents[0].name contains wrong value");
             Assert.AreEqual("name1", futureEvents[1].name, "futureEvents[1].name contains wrong value");
-            Assert.IsTrue(string.Equals(event0.BeginDate.ToString(CultureInfo.InvariantCulture), futureEvents[0].beginDate, StringComparison.CurrentCulture), "futureEvents[0].beginDate contains wrong value");
-            Assert.IsTrue(string.Equals(event1.BeginDate.ToString(CultureInfo.InvariantCulture), futureEvents[1].beginDate, StringComparison.CurrentCulture), "futureEvents[1].beginDate contains wrong value");
-            Assert.IsTrue(string.Equals(event0.EndDate.ToString(CultureInfo.InvariantCulture), futureEvents[0].endDate, StringComparison.CurrentCulture), "futureEvents[0].endDate contains wrong value");
-            Assert.IsTrue(string.Equals(event1.EndDate.ToString(CultureInfo.InvariantCulture), futureEvents[1].endDate, StringComparison.CurrentCulture), "futureEvents[1].endDate contains wrong value");
+            Assert.AreEqual(event0.BeginDate.ToString(CultureInfo.InvariantCulture), futureEvents[0].beginDate, "futureEvents[0].beginDate contains wrong value");
+            Assert.AreEqual(event1.BeginDate.ToString(CultureInfo.InvariantCulture), futureEvents[1].beginDate, "futureEvents[1].beginDate contains wrong value");
+            Assert.AreEqual(event0.EndDate.ToString(CultureInfo.InvariantCulture), futureEvents[0].endDate,"futureEvents[0].endDate contains wrong value");
+            Assert.AreEqual(event1.EndDate.ToString(CultureInfo.InvariantCulture), futureEvents[1].endDate, "futureEvents[1].endDate contains wrong value");
 
             Assert.AreEqual(3, pastEvents[0].id, "pastEvents[0].id contains wrong value");
             Assert.AreEqual(2, pastEvents[1].id, "pastEvents[1].id contains wrong value");
             Assert.AreEqual("name3", pastEvents[0].name, "pastEvents[0].name contains wrong value");
             Assert.AreEqual("name2", pastEvents[1].name, "pastEvents[1].name contains wrong value");
-            Assert.IsTrue(string.Equals(event3.BeginDate.ToString(CultureInfo.InvariantCulture), pastEvents[0].beginDate, StringComparison.CurrentCulture), "pastEvents[0].beginDate contains wrong value");
-            Assert.IsTrue(string.Equals(event2.BeginDate.ToString(CultureInfo.InvariantCulture), pastEvents[1].beginDate, StringComparison.CurrentCulture), "pastEvents[1].beginDate contains wrong value");
-            Assert.IsTrue(string.Equals(event3.EndDate.ToString(CultureInfo.InvariantCulture), pastEvents[0].endDate, StringComparison.CurrentCulture), "pastEvents[0].endDate contains wrong value");
-            Assert.IsTrue(string.Equals(event2.EndDate.ToString(CultureInfo.InvariantCulture), pastEvents[1].endDate, StringComparison.CurrentCulture), "pastEvents[1].endDate contains wrong value");
+            Assert.AreEqual(event3.BeginDate.ToString(CultureInfo.InvariantCulture), pastEvents[0].beginDate, "pastEvents[0].beginDate contains wrong value");
+            Assert.AreEqual(event2.BeginDate.ToString(CultureInfo.InvariantCulture), pastEvents[1].beginDate, "pastEvents[1].beginDate contains wrong value");
+            Assert.AreEqual(event3.EndDate.ToString(CultureInfo.InvariantCulture), pastEvents[0].endDate, "pastEvents[0].endDate contains wrong value");
+            Assert.AreEqual(event2.EndDate.ToString(CultureInfo.InvariantCulture), pastEvents[1].endDate, "pastEvents[1].endDate contains wrong value");
         }
 
         [TestMethod]

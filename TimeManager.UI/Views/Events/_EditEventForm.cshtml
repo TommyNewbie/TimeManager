@@ -1,4 +1,5 @@
-﻿@model TimeManager.UI.Models.CreateEventViewModel
+﻿@using TimeManager.UI.Models
+@model EditEventViewModel
 
 @{
     var ajaxOptions = new AjaxOptions()
@@ -10,11 +11,12 @@
 
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h4 class="modal-title">Add new event</h4>
+    <h4 class="modal-title">Edit</h4>
 </div>
 
-@using (Ajax.BeginForm("AddEvent", null, ajaxOptions, new { @class = "form-horizontal" }))
+@using (Ajax.BeginForm("EditEvent", null, ajaxOptions, new { @class = "form-horizontal" }))
 {
+    @Html.HiddenFor(n => n.Id)
     <div class="modal-body">
         <div class="form-group">
             @Html.LabelFor(n => n.Name, new { @class = "control-label col-xs-3" })
@@ -40,6 +42,6 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Create</button>
+        <button type="submit" class="btn btn-primary">Edit</button>
     </div>
 }

@@ -7,21 +7,15 @@ using System.Collections.Generic;
 using TimeManager.UI.Domain.Entry;
 using TimeManager.UI.Models;
 using System.Linq;
+using System.Web.Mvc;
 
 namespace TimeManager.Tests
 {
     [TestClass]
     public class AddEventTest
     {
-        private EventsController InitializeController()
+        private EventsController InitializeController(ICollection<Event> events)
         {
-            var events = new List<Event>
-            {
-                new Event() { BeginDate = DateTime.Now },
-                new Event() { BeginDate = DateTime.Now },
-                new Event() { BeginDate = DateTime.Now }
-            };
-
             var repo = new Mock<IEventRepository>();
             repo.Setup(n => n.Add(It.IsAny<Event>())).Callback<Event>(e => events.Add(e));
             repo.Setup(n => n.GetAll()).Returns(events.AsEnumerable());
@@ -32,15 +26,15 @@ namespace TimeManager.Tests
         [TestMethod]
         public void Add_valid_event()
         {
-            var target = InitializeController();
+            var events = new List<Event>();
+            var target = InitializeController(events);
 
-            dynamic json = target.AddEvent(new CreateEventViewModel { BeginTime = DateTime.Now.AddDays(1) }).Data;
-            var futureEvents = ((IEnumerable<dynamic>)json.futureEvents).ToArray();
-            var pastEvents = ((IEnumerable<dynamic>)json.pastEvents).ToArray();
+            var result = target.AddEvent(new CreateEventViewModel { BeginTime = DateTime.Now.AddDays(1) });
+            Assert.IsInstanceOfType(result, typeof(RedirectToRouteResult), "wrong result type");
 
-            Assert.IsTrue(json.isValid, "isValid property contains wrong value");
-            Assert.AreEqual(3, pastEvents.Length, "pastEvents array has wrong length");
-            Assert.AreEqual(1, futureEvents.Length, "futureEvents array has wrong length");
+            var routeResult = (RedirectToRouteResult)result;
+            Assert.AreEqual("GetEvents", routeResult.RouteValues["action"], "wrong action name");
+            Assert.AreEqual(1, events.Count, "event was not added");
         }
 
         [TestMethod]
@@ -48,17 +42,24 @@ namespace TimeManager.Tests
         {
             var firstError = "something goes wrong";
             var secondError = "one more thng goes wrong";
-            var target = InitializeController();
+
+            var events = new List<Event>();
+            var target = InitializeController(events);
+
             target.ModelState.AddModelError("", firstError);
             target.ModelState.AddModelError("", secondError);
 
-            dynamic json = target.AddEvent(new CreateEventViewModel() { BeginTime = DateTime.Now.AddDays(1) }).Data;
+            var result = target.AddEvent(new CreateEventViewModel() { BeginTime = DateTime.Now.AddDays(1) });
+            Assert.IsInstanceOfType(result, typeof(JsonResult));
+
+            dynamic json = ((JsonResult)result).Data;
             var errors = json.errors.ToArray();
 
             Assert.IsFalse(json.isValid, "isValid property contains wrong value");
             Assert.AreEqual(2, errors.Length, "errors property has wrong length");
             Assert.AreEqual(firstError, errors[0], "errors[0] constains wrong value");
             Assert.AreEqual(secondError, errors[1], "errors[1] constains wrong value");
+            Assert.AreEqual(0, events.Count, "event was added");
         }
     }
 }

@@ -1,11 +1,19 @@
 ﻿body {
     background-color: #f4f4f4 !important;
-    color: rgb(214, 223, 239);
+    color: black;
     padding-top: 30px;
 }
 
+.field-validation-error {
+    color: #a94442;
+}
+
+#errors{
+    padding-top: 10px;
+}
+
 .event {
-    padding-top: 40px;
+    padding-top: 10px;
 }
 
 .nav-tabs {
@@ -26,12 +34,15 @@
     }
 
     .nav-tabs > li > a:hover {
-        color:  #d4ffff;
+        color: #d4ffff;
     }
-    .tab-content {
-        background-color: #14736b;
-        padding-bottom: 30px;
-    }
-    h3 {
-        margin: 0;
-    }
+
+.tab-content {
+    background-color: #14736b;
+    padding-bottom: 30px;
+    color:rgb(214, 223, 239)  ;
+}
+
+h3 {
+    margin: 0;
+}

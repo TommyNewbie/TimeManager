@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using TimeManager.UI.Domain;
@@ -32,6 +33,11 @@ namespace TimeManager.UI.DataAccess
         {
             _db.Entry(entry).State = EntityState.Modified;
             _db.SaveChanges();
+        }
+
+        public Event Find(int id)
+        {
+            return _db.Events.Find(id);
         }
     }
 }

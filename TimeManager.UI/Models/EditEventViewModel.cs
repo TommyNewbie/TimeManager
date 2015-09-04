@@ -4,13 +4,14 @@ using TimeManager.UI.Infrastructure.ValidationAttributes;
 
 namespace TimeManager.UI.Models
 {
-    public class CreateEventViewModel
+    public class EditEventViewModel
     {
-        [Required()]
-        [MaxLength(50)]
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "The {0} is required")]
+        [StringLength(50)]
         public string Name { get; set; }
 
-        [StartsAfterToday(ErrorMessage = "{0} can't be lower then today")]
         [Display(Name = "Begin time")]
         public DateTime BeginTime { get; set; }
 
