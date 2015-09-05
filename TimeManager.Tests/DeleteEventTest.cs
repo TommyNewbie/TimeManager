@@ -27,12 +27,12 @@ namespace TimeManager.Tests
             var events = new List<Event> { new Event { Id = 1 } };
             var target = InitializeController(events);
 
-            var result = target.DeleteEvent(1);
+            var result = target.Delete(1);
             Assert.IsInstanceOfType(result, typeof(RedirectToRouteResult), "wrong result type");
 
             var routeResult = (RedirectToRouteResult)result;
-            Assert.AreEqual(0, events.Count, "event was not deleted");
-            Assert.AreEqual("GetEvents", routeResult.RouteValues["action"], "wrong action name");
+            Assert.AreEqual(0, events.Count, "the event was not deleted");
+            Assert.AreEqual("GetAll", routeResult.RouteValues["action"], "wrong action name");
         }
 
         [TestMethod]
@@ -41,14 +41,14 @@ namespace TimeManager.Tests
             var events = new List<Event> { new Event { Id = 1 } };
             var target = InitializeController(null);
 
-            var result = target.DeleteEvent(6);
-            Assert.IsInstanceOfType(result, typeof(JsonResult), "result has a wrong type");
+            var result = target.Delete(6);
+            Assert.IsInstanceOfType(result, typeof(JsonResult), "the result has a wrong type");
 
             dynamic json = ((JsonResult)result).Data;
             var errors = json.errors;
 
-            Assert.IsFalse(json.isValid, "isValid property contains wrong value");
-            Assert.AreEqual(1, errors.Count, "errors property contains wrong count of elements");
+            Assert.AreEqual("error", json.status, "the status property contains wrong value");
+            Assert.AreEqual(1, errors.Count, "the errors property contains wrong count of elements");
         }
     }
 }

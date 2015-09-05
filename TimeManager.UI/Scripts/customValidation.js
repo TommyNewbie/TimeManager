@@ -14,16 +14,17 @@ $.validator.addMethod("startsafter", function (value, element, data) {
 $.validator.unobtrusive.adapters.addSingleVal("morethen", "id");
 
 $.validator.addMethod("morethen", function (value, element, id) {
-    var beginDate = moment($("#" + id).val(), "YYYY/MM/DD HH:mm");
+    var beginTime$ = $(element).closest("form").find("input[name="+id+"]");
+    var beginDate = moment(beginTime$.val(), "YYYY/MM/DD HH:mm");
     var endDate = moment(value, "YYYY/MM/DD HH:mm");
     return beginDate < endDate;
 });
 
 $.validator.setDefaults({
     highlight: function (element) {
-        $(element).closest(".form-group").addClass("has-error").removeClass("has-success");
+        $(element).closest(".form-group").addClass("has-error");
     },
     unhighlight: function (element) {
-        $(element).closest(".form-group").addClass("has-success").removeClass("has-error");
+        $(element).closest(".form-group").removeClass("has-error");
     }
 });

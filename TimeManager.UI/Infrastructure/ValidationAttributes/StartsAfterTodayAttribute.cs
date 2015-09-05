@@ -8,7 +8,7 @@ namespace TimeManager.UI.Infrastructure.ValidationAttributes
 {
     public class StartsAfterTodayAttribute : ValidationAttribute, IClientValidatable
     {
-        public StartsAfterTodayAttribute() : base("{0} can't be before today.")
+        public StartsAfterTodayAttribute() : base("The {0} can't starts before today.")
         {
 
         }

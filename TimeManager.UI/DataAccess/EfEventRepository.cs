@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 using TimeManager.UI.Domain;
 using TimeManager.UI.Domain.Entry;
 
@@ -13,7 +14,12 @@ namespace TimeManager.UI.DataAccess
 
         public IEnumerable<Event> GetAll()
         {
-            return _db.Events.AsEnumerable();
+            return GetAll(n => true);
+        }
+
+        public IEnumerable<Event> GetAll(Expression<Func<Event, bool>> exp)
+        {
+            return _db.Events.Where(exp).ToList();
         }
 
         public void Add(Event entry)

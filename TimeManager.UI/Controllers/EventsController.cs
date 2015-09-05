@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Web.Mvc;
 using TimeManager.UI.Domain;
 using TimeManager.UI.Domain.Entry;
 using TimeManager.UI.Models;
+using TimeManager.UI.Models.SessionModels;
 
 [assembly: InternalsVisibleTo("TimeManager.Tests")]
 namespace TimeManager.UI.Controllers
@@ -25,46 +27,51 @@ namespace TimeManager.UI.Controllers
             return View();
         }
 
-        public JsonResult GetEvents()
+        public JsonResult GetAll()
         {
             return Json(GetAllEvents(), JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost()]
-        public ActionResult AddEvent(CreateEventViewModel model)
+        public ActionResult Create(CreateEventViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _db.Add(new Event { Name = model.Name, BeginDate = model.BeginTime, EndDate = model.EndTime });
-                return RedirectToAction("GetEvents");
+                var newEvent = new Event { Id = -1, Name = model.Name, BeginDate = model.BeginTime, EndDate = model.EndTime };
+                if (IsIntersected(newEvent))
+                {
+                    return RedirectToAction("Intersection");
+                }
+                _db.Add(newEvent);
+                return RedirectToAction("GetAll");
             }
-            return Json(new { isValid = false, errors = GetErrors(ModelState) }, JsonRequestBehavior.DenyGet);
+            return Json(new { status = "error", errors = GetErrors(ModelState) }, JsonRequestBehavior.DenyGet);
         }
 
         [HttpPost()]
-        public ActionResult DeleteEvent(int id)
+        public ActionResult Delete(int id)
         {
             try
             {
                 _db.Delete(id);
-                return RedirectToAction("GetEvents");
+                return RedirectToAction("GetAll");
             }
             catch (Exception)
             {
                 ModelState.AddModelError("", "Oops, something went wrong");
             }
 
-            return Json(new { isValid = false, errors = GetErrors(ModelState) });
+            return Json(new { status = "error", errors = GetErrors(ModelState) });
         }
 
-        public JsonResult GetEvent(int id)
+        public JsonResult Update(int id)
         {
             var entry = _db.Find(id);
             if (entry != null)
             {
                 return Json(new
                 {
-                    isValid = true,
+                    status = "valid",
                     entry = new
                     {
                         id = entry.Id,
@@ -77,32 +84,109 @@ namespace TimeManager.UI.Controllers
 
             ModelState.AddModelError("", "Event does not exist");
 
-            return Json(new { isValid = false, errors = GetErrors(ModelState) });
+            return Json(new { status = "error", errors = GetErrors(ModelState) });
         }
 
         [HttpPost]
-        public ActionResult EditEvent(EditEventViewModel model)
+        public ActionResult Update(UpdateEventViewModel model)
         {
             if (ModelState.IsValid)
             {
+                var newEvent = new Event
+                {
+                    Id = model.Id,
+                    Name = model.Name,
+                    BeginDate = model.BeginTime,
+                    EndDate = model.EndTime
+                };
+
+                if (IsIntersected(newEvent))
+                {
+                    return RedirectToAction("Intersection");
+                }
+
                 try
                 {
-                    _db.Update(new Event
-                    {
-                        Id = model.Id,
-                        Name = model.Name,
-                        BeginDate = model.BeginTime,
-                        EndDate = model.EndTime
-                    });
-
-                    return RedirectToAction("GetEvents");
+                    _db.Update(newEvent);
+                    return RedirectToAction("GetAll");
                 }
                 catch (Exception)
                 {
                     ModelState.AddModelError("", "Oops something went wrong");
                 }
             }
-            return Json(new { isValid = false, errors = GetErrors(ModelState) }, JsonRequestBehavior.DenyGet);
+            return Json(new { status = "error", errors = GetErrors(ModelState) }, JsonRequestBehavior.DenyGet);
+        }
+
+        public JsonResult Intersection(IntersectedEvents model)
+        {
+            var sb = new StringBuilder("The event that you creates is intersects with: ");
+
+            if (model.OldEvents.Count() <= 5)
+            {
+                foreach (var oldEvent in model.OldEvents)
+                {
+                    sb.Append(oldEvent.Name + ", ");
+                }
+                sb.Length = sb.Length - 2;
+                sb.Append(".");
+            }
+            else
+            {
+                foreach (var oldEvent in model.OldEvents.Take(5))
+                {
+                    sb.Append(oldEvent.Name + ", ");
+                }
+                sb.Length = sb.Length - 2;
+                sb.Append(" and others.");
+            }
+            return Json(new { status = "intersected", id = model.NewEvent.Id, name = model.NewEvent.Name, message = sb.ToString() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult Intersection(IntersectionViewModel model, IntersectedEvents sessionModel)
+        {
+            if (!sessionModel.IsEmpty)
+            {
+                try
+                {
+                    var newEvent = sessionModel.NewEvent;
+                    if (model.Id != -1 && model.Id == newEvent.Id)
+                    {
+                        _db.Update(newEvent);
+                    }
+                    else if (model.Id == -1 && newEvent.Id == -1 && model.Name.Equals(newEvent.Name, StringComparison.Ordinal))
+                    {
+                        _db.Add(newEvent);
+                    }
+                    return RedirectToAction("GetAll");
+                }
+                catch
+                {
+                    ModelState.AddModelError("", "Can't save changes.");
+                    return Json(new { status = "error", errors = GetErrors(ModelState) }, JsonRequestBehavior.DenyGet);
+                }
+            }
+            ModelState.AddModelError("", "Oops, something went wrong");
+            return Json(new { status = "error", errors = GetErrors(ModelState) }, JsonRequestBehavior.DenyGet);
+        }
+
+        private bool IsIntersected(Event newEvent)
+        {
+            var events = _db.GetAll(old => newEvent.EndDate > old.BeginDate && old.EndDate > newEvent.BeginDate).Where(n => n.Id != newEvent.Id);
+            var result = events.Count() != 0;
+
+            if (result)
+            {
+                Session.Add("Intersection", new IntersectedEvents
+                {
+                    IsEmpty = false,
+                    NewEvent = newEvent,
+                    OldEvents = events
+                });
+            }
+            return result;
+
         }
 
         private object GetErrors(ModelStateDictionary modelState)
@@ -128,7 +212,7 @@ namespace TimeManager.UI.Controllers
             return
                 new
                 {
-                    isValid = true,
+                    status = "valid",
                     futureEvents = FormatEvents(futureEvents),
                     pastEvents = FormatEvents(events.Except(futureEvents))
                 };

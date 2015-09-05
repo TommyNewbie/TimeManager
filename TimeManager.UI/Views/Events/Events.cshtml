@@ -13,7 +13,15 @@
 <div class="modal fade" id="editEvent">
     <div class="modal-dialog">
         <div class="modal-content">
-            @Html.Partial("_EditEventForm", new TimeManager.UI.Models.EditEventViewModel())
+            @Html.Partial("_UpdateEventForm", new TimeManager.UI.Models.UpdateEventViewModel())
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="intersectionEvent">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @Html.Partial("_IntersectedEventForm", new TimeManager.UI.Models.UpdateEventViewModel())
         </div>
     </div>
 </div>

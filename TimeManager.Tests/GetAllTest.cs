@@ -11,7 +11,7 @@ using System.Globalization;
 namespace TimeManager.Tests
 {
     [TestClass]
-    public class GetAllEventsTest
+    public class GetAllTest
     {
         private EventsController InitializeController(IEnumerable<Event> events)
         {
@@ -30,11 +30,11 @@ namespace TimeManager.Tests
 
             var target = InitializeController(new[] { event0, event1, event2, event3 });
 
-            dynamic json = target.GetEvents().Data;
+            dynamic json = target.GetAll().Data;
             var futureEvents = ((IEnumerable<dynamic>)json.futureEvents).ToArray();
             var pastEvents = ((IEnumerable<dynamic>)json.pastEvents).ToArray();
 
-            Assert.AreEqual(true, json.isValid, "isValid property contains wrong value");
+            Assert.AreEqual("valid", json.status, "the status property contains wrong value");
 
             Assert.AreEqual(0, futureEvents[0].id, "futureEvents[0].id contains wrong value");
             Assert.AreEqual(1, futureEvents[1].id, "futureEvents[1].id contains wrong value");
@@ -60,11 +60,11 @@ namespace TimeManager.Tests
         {
             var target = InitializeController(new Event[] { });
 
-            dynamic json = target.GetEvents().Data;
+            dynamic json = target.GetAll().Data;
             var futureEvents = ((IEnumerable<dynamic>)json.futureEvents).ToArray();
             var pastEvents = ((IEnumerable<dynamic>)json.pastEvents).ToArray();
 
-            Assert.AreEqual(true, json.isValid, "isValid property has invalid value");
+            Assert.AreEqual(json.status, "valid", "status property has invalid value");
             Assert.AreEqual(0, futureEvents.Length, "futureEvents is not empty");
             Assert.AreEqual(0, pastEvents.Length, "pastEvents is not empty");
         }

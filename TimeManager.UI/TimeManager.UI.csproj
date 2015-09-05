@@ -138,7 +138,7 @@
     <None Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\custimValidation.js" />
+    <Content Include="Scripts\customValidation.js" />
     <Content Include="Scripts\customScripts.js" />
     <Content Include="Scripts\jquery-1.9.1.js" />
     <Content Include="Scripts\jquery-1.9.1.min.js" />
@@ -171,10 +171,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\Binders\IntersectedEventsModelBinder.cs" />
     <Compile Include="Infrastructure\ValidationAttributes\EndDateValidationAttribute.cs" />
     <Compile Include="Infrastructure\ValidationAttributes\StartsAfterTodayAttribute.cs" />
     <Compile Include="Models\CreateEventViewModel.cs" />
-    <Compile Include="Models\EditEventViewModel.cs" />
+    <Compile Include="Models\IntersectionViewModel.cs" />
+    <Compile Include="Models\UpdateEventViewModel.cs" />
+    <Compile Include="Models\SessionModels\IntersectedEvents.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -185,7 +188,8 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Events\_CreateEventForm.cshtml" />
-    <Content Include="Views\Events\_EditEventForm.cshtml" />
+    <Content Include="Views\Events\_UpdateEventForm.cshtml" />
+    <Content Include="Views\Events\_IntersectedEventForm.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

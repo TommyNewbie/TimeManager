@@ -11,7 +11,7 @@ namespace TimeManager.UI.Infrastructure.ValidationAttributes
         private readonly string _beginDisplayName;
         private readonly string _elemName;
 
-        public EndDateValidationAttribute(string beginDateDisplayName, string beginDate)
+        public EndDateValidationAttribute(string beginDateDisplayName, string beginDate):base("The {0} is invalid.")
         {
             _beginDisplayName = beginDateDisplayName;
             _elemName = beginDate;

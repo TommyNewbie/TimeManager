@@ -1,9 +1,10 @@
 ﻿var eventTemplate;
 var errorTemplate;
+var intersectionTemplate;
 
 var dateTimeOptions = {
     step: 5,
-    validateOnBlur:true,
+    validateOnBlur: true,
     minDate: "2000/01/01",
     maxDate: "2020/01/01"
 };
@@ -20,11 +21,17 @@ function formatServerTime(time) {
 
 //onSuccess method for create event form
 function onSuccess(json) {
-    if (json.isValid === true) {
+    if (json.status === "valid") {
         displayEvents("#future", json.futureEvents);
         displayEvents("#past", json.pastEvents);
-    } else {
+    } else if (json.status === "error") {
         displayErrors(json.errors);
+    } else if (json.status === "intersected") {
+        var intersectModal$ = $("#intersectionEvent");
+        intersectModal$.find("input[name=Id]").val(json.id);
+        intersectModal$.find("input[name=Name]").val(json.name);
+        intersectModal$.find(".modal-body").html(Mustache.render(intersectionTemplate, json));
+        intersectModal$.modal({ show: true });
     }
 }
 
@@ -60,6 +67,8 @@ window.onload = function () {
     Mustache.parse(eventTemplate);
     errorTemplate = $("#errorTemplate").html();
     Mustache.parse(errorTemplate);
+    intersectionTemplate = $("#intersectionTemplate").html();
+    Mustache.parse(intersectionTemplate);
 
     $("#BeginTime").val(formatCurrentDate()).datetimepicker(dateTimeOptions);
     $("#EndTime").val(formatCurrentDate()).datetimepicker(dateTimeOptions);
@@ -67,7 +76,7 @@ window.onload = function () {
     //event deletion logic
     $("#events").on("click", ".btnDelete", function (e) {
         $.ajax({
-            url: "/Events/DeleteEvent",
+            url: "/Events/Delete",
             data: "id=" + $(this).data("id"),
             method: "POST",
             success: function (json) {
@@ -77,13 +86,14 @@ window.onload = function () {
         });
     });
 
-    //event edit logic
+    //event update logic
     $("#events").on("click", ".btnEdit", function (e) {
         $.ajax({
-            url: "Events/GetEvent",
+            url: "Events/Update",
+            method: "GET",
             data: "id=" + $(this).data("id"),
             success: function (json) {
-                if (json.isValid === true) {
+                if (json.status === "valid") {
                     var event = json.entry;
                     var editModal$ = $("#editEvent");
                     editModal$.modal({ show: true });
@@ -91,7 +101,7 @@ window.onload = function () {
                     editModal$.find("input[name=Name]").val(event.name);
                     editModal$.find("input[name=BeginTime]").val(formatServerTime(event.beginTime)).datetimepicker(dateTimeOptions);
                     editModal$.find("input[name=EndTime]").val(formatServerTime(event.endTime)).datetimepicker(dateTimeOptions);
-                } else {
+                } else if (json.status === "error") {
                     displayErrors(json.errors);
                 }
             }
@@ -112,9 +122,15 @@ window.onload = function () {
         }
     });
 
+    //hides intersectionEvent modal
+    $("#intersectionEvent form:first").on("submit", function () {
+        $("#intersectionEvent").modal("hide");
+    });
+
     //Loads events with AJAX
     $.ajax({
-        url: "/Events/GetEvents",
+        url: "/Events/GetAll",
+        method: 'GET',
         success: function (json) {
             displayEvents("#future", json.futureEvents);
             displayEvents("#past", json.pastEvents);
